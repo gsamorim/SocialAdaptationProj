@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <title></title>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link href="Vendors/css/normalize.css" type="text/css" rel="stylesheet" />
+   <link href="Resources/css/base.css" type="text/css" rel="stylesheet" />
+   <link href="Resources/css/style-general.css" type="text/css" rel="stylesheet" />
+   <link href="http://fonts.googleapis.com/css?family=Lato:100,300,400,300italic" rel="stylesheet" type="text/css" />
+   <style>
+
+   </style>
+   <script defer type="module" src="Resources/js/graphD3.js"></script>
+   <script defer type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+   <script defer nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+</head>
+
+<body>
+   <header>
+      <div class="topbar">
+         <div class="row">
+            <a id="btnHome" href="../index.html">
+               <ion-icon name="home-outline"></ion-icon> Home
+            </a>
+            <div class="topList">
+               <li>
+                  <a href="#creation">Creation</a>
+               </li>
+               <li>
+                  <a href="#canva">Canva</a>
+               </li>
+               <li>
+                  <a href="#logic">Logic</a>
+               </li>
+               <li>
+                  <img src="Resources/img/logo-white.png" alt="logo" class="logo" />
+               </li>
+            </div>
+         </div>
+      </div>
+   </header>
+   <main>
+      <section id="creation">
+         <div class="row">
+            <h3>Network Creation</h3>
+         </div>
+         <div class="row">
+            <div class="tab">
+               <button class="tablinks active" onclick="openCity(event, 'Nodes')">Nodes</button>
+               <button class="tablinks" onclick="openCity(event, 'Behaviors')">Behaviors</button>
+               <button class="tablinks" onclick="openCity(event, 'Settings')">Settings</button>
+            </div>
+
+            <div id="Nodes" class="tabcontent" style="display: block;">
+               <div class="row">
+                  <h6>Selected Node:</h6>
+                  <span class="note">(Selected node in <span class="blue-span">&#9632;blue</span>)</span>
+                  <span class="note">(Auto-select last added with <span class="purple-span">&#9632;purple</span>
+                     color)</span>
+               </div>
+               <div class="row flex-box" id="divNodes">
+                  <span class="note">click below at "Add Random Node" to start</span>
+               </div>
+               <div class="row">
+                  <hr>
+               </div>
+               <div class="row">
+                  <h6>Linked Nodes:</h6>
+                  <span class="note">(Nodes linked to selected node in <span
+                        class="green-span">&#9632;green</span>)</span>
+                  <span class="note">(Non-linkable nodes in <span class="black-span">&#9632;black</span>
+                     color)</span>
+               </div>
+               <div class="row flex-box" id="divNodeLinks">
+                  <span class="note">click below at "Add Random Node" to start</span>
+               </div>
+               <div class="row">
+                  <hr>
+               </div>
+               <div class="row">
+                  <h6>Behaviors of the Selected Node:</h6>
+               </div>
+               <div class="row flex-box" id="divNodeBehaviors">
+                  <span class="note">Behaviors are created in the adjacent tab</span>
+               </div>
+               <div class="row">
+                  <hr>
+               </div>
+               <div class="row">
+                  <h6>ID:</h6><input type="text" class="input-text-style" id="tbxNodeId" value="5" disabled />
+                  <h6>Symbol:</h6>
+                  <div id="selNodeSymbol" class="styled-select">
+                     <select>
+                        <option>-----</option>
+                        <option>node.add</option>
+                        <option>node.del</option>
+                        <option>node.select</option>
+                        <option>link.add</option>
+                        <option>link.del</option>
+                        <option>link.select</option>
+                        <option>behavior.add</option>
+                        <option>behavior.del</option>
+                        <option>behavior.select</option>
+                     </select>
+                  </div>
+                  <h6>Name:</h6><input type="text" class="input-text-style" id="tbxNodeName" />
+                  <button id="btnUpdateNode" class="btn-style-small wauto">Update
+                     Node</button>
+               </div>
+               <div class="row">
+                  <hr>
+               </div>
+               <div class="row">
+                  <button id="btnAddNode" class="btn-style-small wauto">Add Random Node</button>
+                  <button id="btnDeleteNode" class="btn-style-small wauto">Delete Selected
+                     Node</button>
+               </div>
+            </div>
+
+            <div id="Behaviors" class="tabcontent">
+               <div class="row">
+                  <h6>Behaviors:</h6>
+               </div>
+               <div class="row flex-box" id="divBehaviors">
+
+               </div>
+               <div class="row">
+                  <h6>Selected Behavior Commands:</h6>
+               </div>
+               <div class="row">
+                  <button id="btnAddBehavior" class="btn-style-small wauto">Add Behavior</button>
+                  <button id="btnUpdateBehavior" class="btn-style-small wauto">Update
+                     Behavior</button>
+                  <button id="btnDeleteBehavior" class="btn-style-small wauto">Delete
+                     Behavior</button>
+               </div>
+            </div>
+
+            <div id="Settings" class="tabcontent">
+               <div class="row">
+                  <h6>Threshold:</h6>
+               </div>
+               <div class="row">
+                  <input type="range" min="1" max="100" value="50" class="slider" id="rangeThreshold">
+               </div>
+               <div class="row">
+                  <p>Value: <span id="lblThreshold">teste</span></p>
+               </div>
+               <div class="row">
+                  <h6>Graph Settings:</h6>
+               </div>
+               <div class="row flex-box">
+                  <input class="check-input" type="checkbox" id="btnShowHideAxis" checked />
+                  <label class="check-label" for="btnShowHideAxis">Axis Bar</label>
+               </div>
+            </div>
+         </div>
+         <div class="row" id="database">
+            <button class="btn-style-small wauto" onclick="showHideDatabase()">
+               <ion-icon id="iconDatabase" name="add-circle-outline"></ion-icon>Show/Refresh Database
+            </button>
+            <button id="btnSaveDatabase" class="btn-style-small wauto">Save Current Database</button>
+            <textarea id="myTextArea" class="textarea15" rows=15 readonly style="display: none;"></textarea>
+         </div>
+      </section>
+      <section id="canvas">
+         <div class="row">
+            <div class="canva"></div>
+         </div>
+      </section>
+      <section id="logic">
+
+         <div class="row top-row">
+            <h4>
+               <button class="btn-icon" onclick="showHideLogic()">
+                  <ion-icon id="iconLogic" name="remove-circle-outline"></ion-icon>
+               </button>
+               Logic area:
+            </h4>
+         </div>
+         <div id="logic" class="logic-content">
+            <p>This example use media queries to transform the sidebar to a top navigation bar when the screen size
+               is
+               700px or less.</p>
+            <div class="row">
+               <div class="command-bar-container">
+                  <input type="text" class="input-text-underlined"
+                     placeholder="Insert your desired Logical Commands here...">
+                  <button id="btnSubmitCommand" class="btn-style">Submit</button>
+               </div>
+            </div>
+         </div>
+      </section>
+      <script>
+         function openCity(evt, cityName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+               tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+               tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(cityName).style.display = "block";
+            evt.currentTarget.className += " active";
+         }
+         function showHideDatabase() {
+            var div = document.getElementById("myTextArea");
+            if (div.style.display === "none") {
+               div.style.display = "block";
+            } else {
+               div.style.display = "none";
+            }
+            var icon = document.getElementById("iconDatabase");
+            if (icon.getAttribute('name') == 'remove-circle-outline')
+               icon.setAttribute('name', 'add-circle-outline');
+            else if (icon.getAttribute('name') == 'add-circle-outline')
+               icon.setAttribute('name', 'remove-circle-outline');
+         }
+      </script>
+   </main>
+</body>
+
+</html>

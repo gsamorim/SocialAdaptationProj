@@ -1,0 +1,141 @@
+/* Este .css contém caracteristicas para serem utilizadas para diversos tipos de sites. */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  /* background-color: #b6ff00; */
+  background-color: #a2c1e7;
+  /* background-color: #f5f5f5; */
+  background-image: linear-gradient(to right, #a2c1e7, #c6f8e6 50%, #a2c1e7);
+  /* color: #3c3c3c; */
+  color: #3f4750;
+  font-family: "Lato", Arial, sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+  text-rendering: optimizeLegibility;
+}
+
+.clearfix {
+  zoom: 1;
+}
+
+.clearfix:after {
+  content: ".";
+  clear: both;
+  display: block;
+  height: 0;
+  visibility: hidden;
+}
+
+.row {
+  zoom: 1;
+  /*seta as margens right e left auto pra sempre ter o elemento centralizado*/
+  margin: 0 auto; /*equivale a margin: 0 auto 0 auto;*/
+  max-width: 1140px;
+}
+
+.row:after,
+row:before {
+  content: "";
+  display: table;
+}
+
+.row:after {
+  clear: both;
+}
+
+.group {
+  zoom: 1;
+}
+
+.group:before,
+.group:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+.col {
+  display: block;
+  float: left;
+  margin: 1% 0 1% 1.6%;
+}
+
+.col:first-child {
+  margin-left: 0;
+}
+
+/*  GRID OF TWELVE  */
+.c-12-12 {
+  width: 100%;
+}
+
+.c-11-12 {
+  width: 91.53%;
+}
+
+.c-10-12 {
+  width: 83.06%;
+}
+
+.c-9-12 {
+  width: 74.6%;
+}
+
+.c-8-12 {
+  width: 66.13%;
+}
+
+.c-7-12 {
+  width: 57.66%;
+}
+
+.c-6-12 {
+  width: 49.2%;
+}
+
+.c-5-12 {
+  width: 40.73%;
+}
+
+.c-4-12 {
+  width: 32.26%;
+}
+
+.c-3-12 {
+  width: 23.8%;
+}
+
+.c-2-12 {
+  width: 15.33%;
+}
+
+.c-1-12 {
+  width: 6.866%;
+}
+
+/*  GO FULL WIDTH BELOW 480 PIXELS */
+@media only screen and (max-width: 480px) {
+  .col {
+    margin: 1% 0 1% 0%;
+  }
+
+  .c-1-12,
+  .c-2-12,
+  .c-3-12,
+  .c-4-12,
+  .c-5-12,
+  .c-6-12,
+  .c-7-12,
+  .c-8-12,
+  .c-9-12,
+  .c-10-12,
+  .c-11-12,
+  .c-12-12 {
+    width: 100%;
+  }
+}

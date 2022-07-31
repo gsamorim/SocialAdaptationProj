@@ -1,0 +1,215 @@
+/* ----- Style Area ----- */
+.right {
+  float: right;
+}
+
+.left {
+  float: left;
+}
+
+.content {
+  margin-top: 57px;
+}
+
+a:link,
+a:visited {
+  text-decoration: none;
+  border-bottom: 1px solid #6c7a89;
+  transition: border-bottom 0.2s, color 0.2s;
+}
+
+a:hover,
+a:active {
+  border-bottom: 1px solid transparent;
+}
+
+.topbar {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1;
+  background: none repeat scroll 0 0 #25383c;
+  overflow: hidden;
+  border-bottom: 1px solid #1e494e;
+  padding: 1px 0;
+}
+
+#btnHome {
+  float: left;
+  color: #f9fafa;
+  background-color: #7eac00;
+  text-align: center;
+  padding: 14px 20px;
+  text-decoration: none;
+  font-size: 100%;
+}
+
+#btnHome:hover {
+  background-color: #6c7a89;
+  color: black;
+}
+
+.topList {
+  float: right;
+}
+
+.topList li {
+  float: left;
+  list-style: none;
+}
+
+.topList a {
+  float: left;
+  color: #f9fafa;
+  text-align: center;
+  padding: 14px 20px;
+  text-decoration: none;
+  font-size: 100%;
+}
+
+.topList a:hover {
+  background-color: #6c7a89;
+  color: black;
+}
+
+#showcase {
+  background-image: -webkit-linear-gradient(
+      rgba(0, 0, 0, 0.7),
+      rgba(0, 0, 0, 0.7)
+    ),
+    url(/Resources/img/background.jpg);
+
+  background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+    url(../img/background.jpg);
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  background-attachment: fixed;
+}
+
+#showcase-txt {
+  position: absolute;
+  width: 1140px;
+  top: 60%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+}
+
+.mode-box {
+  padding: 1%;
+  border-radius: 10px;
+  background: rgba(168, 244, 217, 0.2);
+}
+
+.mode-box:hover {
+  background: rgba(168, 244, 217, 0.5);
+}
+
+.mode-box img {
+  display: block;
+  width: 50%;
+  height: auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 15px;
+}
+
+.mode-box ul {
+  list-style: none;
+}
+
+.mode-box ul li {
+  padding: 5px 0;
+}
+
+.mode-box a {
+  margin-top: 25px;
+}
+
+.mode-box div:last-child {
+  text-align: center;
+  border: 0;
+}
+
+/* ----- Style-general Area ----- */
+
+.logo {
+  height: 45px;
+  width: auto;
+  float: left;
+  margin: 5px 0 0 0;
+}
+
+/* ----- test purpose Area ----- */
+
+.logic-content {
+  background-color: #5f909b;
+  height: 100px;
+}
+
+.canva {
+  height: 100px;
+  background-color: #007ca6;
+}
+
+.edition-content {
+  height: 100px;
+  background-color: #5f909b;
+}
+
+/* ----- Responsive Area ----- */
+@media screen and (max-width: 1140px) {
+  #showcase-txt {
+    width: 80%;
+  }
+
+  .mode-box img {
+    margin-bottom: 5px;
+  }
+
+  .mode-box ul li {
+    padding: 1px 2px;
+    font-size: 90%;
+  }
+
+  .mode-box a {
+    margin-top: 5px;
+  }
+}
+@media screen and (max-width: 700px) {
+  header {
+    position: relative;
+  }
+  .content {
+    margin-top: 0;
+    position: relative;
+  }
+  .topbar {
+    width: 100%;
+    position: relative;
+  }
+  .topList {
+    width: auto;
+    height: auto;
+    position: relative;
+    float: right;
+  }
+  .topList li {
+    float: r;
+  }
+  div.content {
+    margin-left: 0;
+  }
+  .logo {
+    margin: 5px 0 0 0;
+  }
+}
+
+@media screen and (max-width: 400px) {
+  .topList li {
+    text-align: center;
+    float: none;
+  }
+}

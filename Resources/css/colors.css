@@ -1,0 +1,46 @@
+/* 
+#----background:
+Lightsteelblue: a2c1e7 
+Aero Blue: c6f8e6
+
+#----lightBackground:
+Loblolly(light greyish): c0c7ce
+Alabaster(white greyish): f9fafa
+
+#----darkBackground:
+Big Stone(dark blueish): 232c47
+Blue Dianne(dark blue+green ish): 1e494e
+Alabaster - Font: f9fafa
+Magic Mint - border-top: 99f2d2
+
+#----font(color): 
+Mako(dark grey): 3f4750
+
+#----topbar:
+Outer Space(blackish green): 25383c
+border-bottom: 1e494e
+
+*/
+
+.colors {
+  background-color: #a2c1e7;
+  background-color: #c6f8e6;
+  background-color: #c0c7ce;
+  background-color: #f9fafa;
+  background-color: #232c47;
+  background-color: #1e494e;
+  background-color: #99f2d2;
+  background-color: #3f4750;
+  background-color: #25383c;
+  background-color: #5f909b;
+  background-color: #9dbcc3;
+  background-color: #527c86;
+  background-color: #7eac00;
+  background-color: #414141;
+  background-color: #ffffff;
+  background-color: #ffffff;
+  background-color: #ffffff;
+  background-color: #ffffff;
+  background-color: #ffffff;
+  background-color: #ffffff;
+}
