@@ -61,7 +61,7 @@
                      color)</span>
                </div>
                <div class="row flex-box" id="divNodes">
-                  <span class="note">click below at "Add Random Node" to start</span>
+                  <span id="spanNodeDiv" class="note">click below at "Add Random Node" to start</span>
                </div>
                <div class="row">
                   <hr>
@@ -74,7 +74,7 @@
                      color)</span>
                </div>
                <div class="row flex-box" id="divNodeLinks">
-                  <span class="note">click below at "Add Random Node" to start</span>
+                  <span id="spanNodeLinkDiv" class="note">click below at "Add Random Node" to start</span>
                </div>
                <div class="row">
                   <hr>
@@ -89,20 +89,10 @@
                   <hr>
                </div>
                <div class="row">
-                  <h6>ID:</h6><input type="text" class="input-text-style" id="tbxNodeId" value="5" disabled />
+                  <h6>ID:</h6><input type="text" class="input-text-style" id="tbxNodeId" disabled />
                   <h6>Symbol:</h6>
-                  <div id="selNodeSymbol" class="styled-select">
-                     <select>
-                        <option>-----</option>
-                        <option>node.add</option>
-                        <option>node.del</option>
-                        <option>node.select</option>
-                        <option>link.add</option>
-                        <option>link.del</option>
-                        <option>link.select</option>
-                        <option>behavior.add</option>
-                        <option>behavior.del</option>
-                        <option>behavior.select</option>
+                  <div class="styled-select">
+                     <select id="selNodeSymbol">
                      </select>
                   </div>
                   <h6>Name:</h6><input type="text" class="input-text-style" id="tbxNodeName" />
@@ -114,8 +104,17 @@
                </div>
                <div class="row">
                   <button id="btnAddNode" class="btn-style-small wauto">Add Random Node</button>
-                  <button id="btnDeleteNode" class="btn-style-small wauto">Delete Selected
-                     Node</button>
+                  <button id="btnDeleteNode" class="btn-style-small wauto">Delete Selected Node</button>
+                  <div id="modalDeleteNode" class="modal">
+
+                     <!-- Modal content -->
+                     <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <p>Confirm Node Deletion?</p>
+                        <button id="btnConfirmDetion" class="btn-style-small wauto">Yes</button>
+                        <button id="btnCancelDeletion" class="btn-style-small wauto">No</button>
+                     </div>
+                  </div>
                </div>
             </div>
 
@@ -158,10 +157,13 @@
             </div>
          </div>
          <div class="row" id="database">
-            <button class="btn-style-small wauto" onclick="showHideDatabase()">
-               <ion-icon id="iconDatabase" name="add-circle-outline"></ion-icon>Show/Refresh Database
-            </button>
-            <button id="btnSaveDatabase" class="btn-style-small wauto">Save Current Database</button>
+            <div class="right">
+               <button id="btnDatabase" class="btn-style-small wauto">
+                  <ion-icon id="iconDatabase" name="add-circle-outline"></ion-icon>Show/Hide Database
+               </button>
+               <button id="btnRefreshDatabase" class="btn-style-small wauto">Refresh Database</button>
+               <button id="btnSaveDatabase" class="btn-style-small wauto">Save Database</button>
+            </div>
             <textarea id="myTextArea" class="textarea15" rows=15 readonly style="display: none;"></textarea>
          </div>
       </section>
@@ -207,18 +209,33 @@
             document.getElementById(cityName).style.display = "block";
             evt.currentTarget.className += " active";
          }
-         function showHideDatabase() {
-            var div = document.getElementById("myTextArea");
-            if (div.style.display === "none") {
-               div.style.display = "block";
-            } else {
-               div.style.display = "none";
+
+         /* ----- Modal Deletion Area ----- */
+         // Get the modal
+         var modal = document.getElementById("modalDeleteNode");
+         // Get the button that opens the modal
+         var btn = document.getElementById("btnDeleteNode");
+         // Get the <span> element that closes the modal
+         var span = document.getElementsByClassName("close")[0];
+         // Get the "No" button that cancel deletion
+         var btnNo = document.getElementById("btnCancelDeletion");
+         // When the user clicks on the button, open the modal
+         btn.onclick = function () {
+
+            modal.style.display = "block";
+         }
+         // When the user clicks on <span> (x) or "No" button, close the modal
+         span.onclick = function () {
+            modal.style.display = "none";
+         }
+         btnNo.onclick = function () {
+            modal.style.display = "none";
+         }
+         // When the user clicks anywhere outside of the modal, close it
+         window.onclick = function (event) {
+            if (event.target == modal) {
+               modal.style.display = "none";
             }
-            var icon = document.getElementById("iconDatabase");
-            if (icon.getAttribute('name') == 'remove-circle-outline')
-               icon.setAttribute('name', 'add-circle-outline');
-            else if (icon.getAttribute('name') == 'add-circle-outline')
-               icon.setAttribute('name', 'remove-circle-outline');
          }
       </script>
    </main>

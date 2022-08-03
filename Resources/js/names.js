@@ -73,12 +73,20 @@ export function chooseRandom(choosenNames) {
 export function chooseRandomUnicode(choosenNames) {
   do {
     var unicodeElement =
-      unicodeSymbols[Math.floor(Math.random() * unicodeSymbols.length)].code;
-    var symbol = String.fromCharCode(parseInt(unicodeElement, 16));
+      unicodeSymbols[Math.floor(Math.random() * unicodeSymbols.length)];
+    var symbol = String.fromCharCode(parseInt(unicodeElement.code, 16));
     // console.log(
     //   unicodeElement + "-" + symbol + "-" + choosenNames.includes(symbol)
     // );
   } while (choosenNames.includes(symbol));
 
-  return symbol;
+  let name = unicodeElement.name;
+  return { symbol, name };
+}
+
+export function allSymbols() {
+  var symbols = unicodeSymbols.map((a) =>
+    String.fromCharCode(parseInt(a.code, 16))
+  );
+  return symbols;
 }

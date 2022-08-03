@@ -4,17 +4,11 @@ export class Agent {
   id;
   name;
   symbol;
-  behaviors;
   constructor(name, symbol) {
     this.id = counter;
     counter++;
     this.name = name;
     this.symbol = symbol;
-    this.behaviors = []; //array of type behavior for behaviors
-  }
-
-  addBehavior(behavior) {
-    this.behavior.push(behavior);
   }
 }
 
@@ -27,29 +21,17 @@ export class Link {
   }
 }
 
-export class Behavior {
-  id;
-  description;
-  constructor(id, description) {
-    this.id = id;
-    this.description = description;
-  }
-}
-
+//method that create/remove link between two nodes
 export function createLink(dataset, selectedNode, selectedNodeLink) {
   var links = dataset.links;
   var found = false;
   let i = 0;
   for (; i < links.length; i++) {
     if (
-      links[i].source.id == selectedNode &&
-      links[i].target.id == selectedNodeLink
-    ) {
-      found = true;
-      break;
-    } else if (
-      links[i].source.id == selectedNodeLink &&
-      links[i].target.id == selectedNode
+      (links[i].source.id == selectedNode &&
+        links[i].target.id == selectedNodeLink) ||
+      (links[i].source.id == selectedNodeLink &&
+        links[i].target.id == selectedNode)
     ) {
       found = true;
       break;
@@ -64,5 +46,59 @@ export function createLink(dataset, selectedNode, selectedNodeLink) {
     var nB = dataset.nodes.find((x) => x.id == selectedNodeLink);
     //add link
     dataset.links.push(new Link(nA, nB));
+  }
+}
+
+export class Behavior {
+  id;
+  short;
+  description;
+  constructor(id, short, description) {
+    this.id = id;
+    this.short = short;
+    this.description = description;
+  }
+}
+
+export class Assumption {
+  agent;
+  behavior;
+  constructor(agent, behavior) {
+    this.agent = agent;
+    this.behavior = behavior;
+  }
+}
+
+//method to create/remove assumption
+//a different method is needed for logical assumptions
+//since there they do not lose assumptions at any time
+export function newAssumption(
+  dataset,
+  selectedNode,
+  selectedNodeNewAssumption
+) {
+  var assumptions = dataset.assumptions;
+  var found = false;
+  let i = 0;
+  for (; i < assumptions.length; i++) {
+    if (
+      assumptions[i].agent.id == selectedNode &&
+      assumptions[i].behavior.id == selectedNodeNewAssumption
+    ) {
+      found = true;
+      break;
+    }
+  }
+  if (found) {
+    //remove link at position "i"
+    dataset.assumptions.splice(i, 1);
+  } else {
+    //find ids by their "id"
+    var agentID = dataset.nodes.find((x) => x.id == selectedNode);
+    var behaviorID = dataset.behaviors.find(
+      (x) => x.id == selectedNodeNewAssumption
+    );
+    //add link
+    dataset.assumptions.push(new Assumption(agentID, behaviorID));
   }
 }

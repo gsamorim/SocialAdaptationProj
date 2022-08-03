@@ -1,10 +1,13 @@
 import * as d3 from "https://unpkg.com/d3?module";
 import { Agent, Link, Behavior, createLink } from "./agent.js";
-import { chooseRandom, chooseRandomUnicode } from "./names.js";
+import { chooseRandom, chooseRandomUnicode, allSymbols } from "./names.js";
+import { TxtWorker } from "./txtWorker.js";
 
 var dataset = {
   nodes: [],
   links: [],
+  behaviors: [],
+  assumptions: [],
 };
 
 /* #region ---------- Canvas Region ---------- */
@@ -133,92 +136,85 @@ function ticked() {
 }
 
 //function responsable by the insertion/adaptation of nodes into the graph
-function update() {
+function updateCanva() {
   //preciso ver os nodes, ver os ids e tal, talvez nodes.push para adicionar
   //caso queira q seja um node novo
   //adicionar id nos nodos, pq aparentemente estão sem id
-  nodes = nodes
-    .data(dataset.nodes, function (d) {
-      return d.id;
-    })
-    .join(
-      (enter) => {
-        let enterG = enter.append("g");
-        //pra voltar 1 nível na seleção
-        //.select(function () { return this.parentNode; })
-        enterG
-          .append("circle")
-          .attr("r", 10)
-          .attr("fill", "blue")
-          .attr("stroke", "black")
+  nodes = nodes.data(dataset.nodes).join(
+    (enter) => {
+      let enterG = enter.append("g");
+      //pra voltar 1 nível na seleção
+      //.select(function () { return this.parentNode; })
+      enterG
+        .append("circle")
+        .attr("r", 10)
+        .attr("fill", "blue")
+        .attr("stroke", "black")
+        .attr("opacity", 0)
+        .call((enter) => enter.transition(750).attr("opacity", 1));
+      enterG
+        .append("text")
+        .attr("font-size", "0.8em")
+        .attr("text-anchor", "middle")
+        .attr("alignment-baseline", "middle")
+        .style("fill", "darkOrange")
+        .attr("dy", (d) => 20)
+        .text((d) => d.symbol);
+      enterG
+        .on("dblclick", clicked)
+        .call(
+          d3
+            .drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended)
+        );
+      return enterG;
+    },
+    (update) => {
+      update
+        .select("circle")
+        .transition()
+        .duration(500)
+        .attr("fill", function (d) {
+          if (d.id == selectedNode) return "pink";
+          else return "orange";
+        })
+        .attr("opacity", 1);
+      update.select("text").text((d) => d.symbol);
+      return update;
+    },
+    (exit) =>
+      exit.call((exit) =>
+        exit
+          .attr("fill", "red")
+          .transition()
+          .duration(500)
           .attr("opacity", 0)
-          .call((enter) => enter.transition(750).attr("opacity", 1));
-        enterG
-          .append("text")
-          .attr("font-size", "0.8em")
-          .attr("text-anchor", "middle")
-          .attr("alignment-baseline", "middle")
-          .style("fill", "darkOrange")
-          .attr("dy", (d) => 20)
-          .text((d) => d.symbol);
-        enterG
-          .on("dblclick", clicked)
-          .call(
-            d3
-              .drag()
-              .on("start", dragstarted)
-              .on("drag", dragged)
-              .on("end", dragended)
-          );
-        return enterG;
-      },
-      (update) =>
-        update.call((update) =>
-          update
-            .select("circle")
-            .transition()
-            .duration(500)
-            .attr("fill", function (d) {
-              if (d.id == selectedNode) return "pink";
-              else return "orange";
-            })
-            .attr("opacity", 1)
-        ),
-      (exit) =>
-        exit.call((exit) =>
-          exit
-            .attr("fill", "red")
-            .transition()
-            .duration(500)
-            .attr("opacity", 0)
-            .remove()
-        )
-    );
+          .remove()
+      )
+  );
 
-  links = links
-    .data(dataset.links, function (d) {
-      return d.source.id + "_" + d.target.id;
-    })
-    .join(
-      (enter) =>
-        enter
-          .append("line")
-          .attr("stroke-width", 2)
-          .style("stroke", "red")
-          .call((enter) => enter.transition(500).attr("opacity", 1)),
-      (update) =>
-        update.call((update) =>
-          update
-            .transition()
-            .duration(500)
-            .style("stroke", function (d) {
-              if (d.source.id == selectedNode || d.target.id == selectedNode)
-                return "green";
-              else return "black";
-            })
-        ),
-      (exit) => exit.remove()
-    );
+  links = links.data(dataset.links).join(
+    (enter) =>
+      enter
+        .append("line")
+        .attr("stroke-width", 2)
+        .style("stroke", "red")
+        .call((enter) => enter.transition(500).attr("opacity", 1)),
+    (update) =>
+      update.call((update) =>
+        update
+          .transition()
+          .duration(500)
+          .style("stroke", function (d) {
+            if (d.source.id == selectedNode || d.target.id == selectedNode)
+              return "green";
+            else return "black";
+          })
+      ),
+    (exit) => exit.remove()
+  );
 
   sim.nodes(dataset.nodes);
   //sim.force("link").links(dataset.links);
@@ -267,7 +263,7 @@ function dragended(event, d) {
 }
 
 initZoom();
-update();
+updateCanva();
 
 /* #endregion */
 
@@ -283,7 +279,7 @@ const btnUpdateNode = document.getElementById("btnUpdateNode");
 btnUpdateNode.addEventListener("click", function () {
   updateNode();
 });
-const btnDeleteNode = document.getElementById("btnDeleteNode");
+const btnDeleteNode = document.getElementById("btnConfirmDetion");
 btnDeleteNode.addEventListener("click", function () {
   deleteNode();
 });
@@ -291,16 +287,57 @@ btnDeleteNode.addEventListener("click", function () {
 function newNode() {
   //find free symbol
   var newSymbol = chooseRandomUnicode(dataset.nodes.map((a) => a.symbol));
-  var newAgent = new Agent("a", newSymbol);
+  var newAgent = new Agent(newSymbol.name, newSymbol.symbol);
   selectedNode = newAgent.id;
   dataset.nodes.push(newAgent);
-  update();
+  updateCanva();
   redraw();
+  showNode();
 }
 
+//function that fill input type select for symbols
+function fillSymbolsForSelection() {
+  var symbols = allSymbols();
+  var sel = d3.select("#selNodeSymbol");
+  //sel.on("change", onchange);
+  //for on change check: http://bl.ocks.org/jfreels/6734823
+
+  var options = sel
+    .selectAll("option")
+    .data(symbols)
+    .enter()
+    .append("option")
+    .text(function (d) {
+      return d;
+    });
+}
+fillSymbolsForSelection();
+
 function updateNode() {
-  //console.log(dataset);
-  alert("Not Implemented!");
+  //verify if selected Node exists
+  if (selectedNode !== undefined) {
+    var id = d3.select("#tbxNodeId").node().value;
+    var symbol = d3.select("#selNodeSymbol").node().value;
+    var name = d3.select("#tbxNodeName").node().value;
+    if (symbol == "" || name == "") {
+      alert("Symbol or name empty warning.");
+      return;
+    }
+
+    //Find index of specific object using findIndex method.
+    var objIndex = dataset.nodes.findIndex((obj) => obj.id == id);
+
+    //Update object propertyes.
+    dataset.nodes[objIndex].name = name;
+    dataset.nodes[objIndex].symbol = symbol;
+
+    //update input type text and select
+    d3.select("#selNodeSymbol").property("value", symbol);
+    d3.select("#tbxNodeName").property("value", name);
+    redraw();
+    updateCanva();
+    alert("Updated with sucess!");
+  } else alert("No node selected for update.");
 }
 
 function deleteNode() {
@@ -316,22 +353,41 @@ function deleteNode() {
     dataset.nodes = dataset.nodes.filter((x) => x.id != selectedNode);
     selectedNode = undefined;
 
-    update();
+    updateCanva();
     redraw();
+    cleanNode();
   } else alert("No node selected for deletion.");
+
+  //hide modalDeleteNode
+  d3.select("#modalDeleteNode").style("display", "none");
 }
 
 /* #region ---------- Data Treatment Region ---------- */
 
+//show selected node data
+function showNode() {
+  if (selectedNode !== undefined) {
+    var realNode = dataset.nodes.find((x) => x.id === selectedNode);
+    console.log(realNode);
+    d3.select("#tbxNodeId").property("value", realNode.id);
+    d3.select("#selNodeSymbol").property("value", realNode.symbol);
+    d3.select("#tbxNodeName").property("value", realNode.name);
+  } else alert("No node selected to show data.");
+}
+function cleanNode() {
+  d3.select("#tbxNodeId").attr("value", "");
+  d3.select("#selNodeSymbol").property("value", "-----");
+  d3.select("#tbxNodeName").attr("value", "");
+}
+
 //redraws the entire board function
 function redraw() {
+  //hide span message
+  d3.select("#spanNodeDiv").style("display", "none");
+  d3.select("#spanNodeLinkDiv").style("display", "none");
+
   //draw nodes
-  var divs = d3
-    .select("#divNodes")
-    .selectAll("a")
-    .data(dataset.nodes, function (d) {
-      return d.id;
-    });
+  var divs = d3.select("#divNodes").selectAll("a").data(dataset.nodes);
   divs.join(
     (enter) =>
       enter
@@ -346,6 +402,7 @@ function redraw() {
         update
           .transition()
           .duration(500)
+          .text((d) => d.symbol)
           .style("background-color", function (d) {
             if (d.id == selectedNode) return "blue";
             else return null;
@@ -355,12 +412,7 @@ function redraw() {
   );
 
   //draw nodes for Selected Node Links
-  var divs = d3
-    .select("#divNodeLinks")
-    .selectAll("a")
-    .data(dataset.nodes, function (d) {
-      return d.id;
-    });
+  var divs = d3.select("#divNodeLinks").selectAll("a").data(dataset.nodes);
   //filter links containing selectedNode as source or target
   var filtredLinks = dataset.links.filter(
     (x) => x.source.id == selectedNode || x.target.id == selectedNode
@@ -379,6 +431,7 @@ function redraw() {
         update
           .transition()
           .duration(500)
+          .text((d) => "⇅" + d.symbol)
           .style("background-color", function (d) {
             if (d.id == selectedNode) return "black";
             //check filtredLinks for the d.id, if true d.id is linked to selectedNode
@@ -399,10 +452,11 @@ function redraw() {
 
 //function that paint the selected node li and remove color of the others
 function nodeSelection() {
-  selectedNode = this.id;
+  selectedNode = Number(this.id);
 
-  update();
+  updateCanva();
   redraw();
+  showNode();
 }
 
 //in progress function
@@ -418,7 +472,7 @@ function nodeLinkClick() {
   //create newLink or remove if already exists
   createLink(dataset, selectedNode, selectedNodeLink);
 
-  update();
+  updateCanva();
   redraw();
 }
 
@@ -480,6 +534,81 @@ btnShowHideAxis.addEventListener("change", function () {
   }
 });
 
+/* #endregion */
+
+/* #region ---------- Database Region ---------- */
+
+const btnDatabase = document.getElementById("btnDatabase");
+btnDatabase.addEventListener("click", function () {
+  showDatabase();
+});
+let showingDatabase = false;
+let showingDatabaseAdd = true;
+const btnRefreshDatabase = document.getElementById("btnRefreshDatabase");
+btnRefreshDatabase.addEventListener("click", function () {
+  refreshDatabase();
+});
+
+function showDatabase() {
+  var myTxt = d3.select("#myTextArea");
+  if (showingDatabase) {
+    myTxt.style("display", "none");
+    showingDatabase = false;
+  } else {
+    myTxt.style("display", "block");
+    showingDatabase = true;
+    refreshDatabase(myTxt);
+  }
+  var myIcon = d3.select("#iconDatabase");
+  if (showingDatabaseAdd) {
+    myIcon.property("name", "remove-circle-outline");
+    showingDatabaseAdd = false;
+  } else {
+    myIcon.property("name", "add-circle-outline");
+    showingDatabaseAdd = true;
+  }
+}
+
+function refreshDatabase(myTxt) {
+  if (!myTxt) myTxt = d3.select("#myTextArea");
+  var reducedDatabase = {
+    nodes: [],
+    links: [],
+    behaviors: [],
+    assumptions: [],
+  };
+  for (var i = 0; i < dataset.nodes.length; i++) {
+    let simplifiedNode = {
+      id: dataset.nodes[i].id,
+      name: dataset.nodes[i].name,
+      symbol: dataset.nodes[i].symbol,
+    };
+    reducedDatabase.nodes.push(simplifiedNode);
+  }
+  for (var i = 0; i < dataset.links.length; i++) {
+    let simplifiedLink = {
+      source: dataset.links[i].source.id,
+      target: dataset.links[i].target.id,
+    };
+    reducedDatabase.links.push(simplifiedLink);
+  }
+  for (var i = 0; i < dataset.behaviors.length; i++) {
+    let simplifiedBehavior = {
+      id: dataset.behaviors[i].id,
+      short: dataset.behaviors[i].short,
+      description: dataset.behaviors[i].description,
+    };
+    reducedDatabase.nodes.push(simplifiedBehavior);
+  }
+  for (var i = 0; i < dataset.assumptions.length; i++) {
+    let simplifiedAssumption = {
+      agent: dataset.assumptions[i].agent.id,
+      behavior: dataset.assumptions[i].behavior.id,
+    };
+    reducedDatabase.nodes.push(simplifiedAssumption);
+  }
+  myTxt.property("value", JSON.stringify(reducedDatabase, null, 2));
+}
 /* #endregion */
 
 /* #region ---------- ????? Region ---------- */

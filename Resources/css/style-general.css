@@ -6,6 +6,7 @@
   --color-font-white: #f9fafa;
   --color-std-green: #00ff00;
   --color-std-black: #000000;
+  --color-font-dark: #3f4750;
 }
 
 /* ----- Style Area ----- */
@@ -341,7 +342,7 @@ input[type="text"]:disabled {
 }
 
 #tbxNodeName {
-  width: 80px;
+  width: 180px;
 }
 
 .input-text-style {
@@ -428,6 +429,48 @@ input[type="text"]:disabled {
   width: 100%;
   min-width: 50px;
   max-width: 100%;
+}
+
+/* ----- Modal Delete Node Area ----- */
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: #9dbcc3;
+  color: var(--color-font-dark);
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #25383c;
+  width: 80%; /* Could be more or less, depending on screen size */
+  max-width: 360px;
+}
+
+/* The Close Button */
+.close {
+  color: var(--color-font-dark);
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 /* ----- Responsive Area ----- */
