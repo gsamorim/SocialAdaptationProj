@@ -1,6 +1,14 @@
 import * as d3 from "https://unpkg.com/d3?module";
-import { Agent, Link, Behavior, createLink } from "./agent.js";
+import {
+  Agent,
+  Link,
+  Behavior,
+  createLink,
+  Assumption,
+  newAssumption,
+} from "./agent.js";
 import { chooseRandom, chooseRandomUnicode, allSymbols } from "./names.js";
+import { chooseRandomBehavior } from "./behaviorsEx.js";
 import { TxtWorker } from "./txtWorker.js";
 
 var dataset = {
@@ -320,14 +328,14 @@ function updateNode() {
     var symbol = d3.select("#selNodeSymbol").node().value;
     var name = d3.select("#tbxNodeName").node().value;
     if (symbol == "" || name == "") {
-      alert("Symbol or name empty warning.");
+      alert("Symbol or name field empty warning.");
       return;
     }
 
     //Find index of specific object using findIndex method.
     var objIndex = dataset.nodes.findIndex((obj) => obj.id == id);
 
-    //Update object propertyes.
+    //Update object properties.
     dataset.nodes[objIndex].name = name;
     dataset.nodes[objIndex].symbol = symbol;
 
@@ -347,6 +355,10 @@ function deleteNode() {
     dataset.links = dataset.links.filter(
       (x) => x.source.id != selectedNode && x.target.id != selectedNode
     );
+    //delete assumption containing node id
+    dataset.assumptions = dataset.assumptions.filter(
+      (x) => x.agent.id != selectedNode
+    );
 
     //delete method sometimes return [empty] instead of [] and bugs the system
     //that's why filtered it, improvements probably can be made.
@@ -362,13 +374,12 @@ function deleteNode() {
   d3.select("#modalDeleteNode").style("display", "none");
 }
 
-/* #region ---------- Data Treatment Region ---------- */
+/* #region ---------- Data Treatment Region for First Tab ---------- */
 
 //show selected node data
 function showNode() {
   if (selectedNode !== undefined) {
     var realNode = dataset.nodes.find((x) => x.id === selectedNode);
-    console.log(realNode);
     d3.select("#tbxNodeId").property("value", realNode.id);
     d3.select("#selNodeSymbol").property("value", realNode.symbol);
     d3.select("#tbxNodeName").property("value", realNode.name);
@@ -386,7 +397,7 @@ function redraw() {
   d3.select("#spanNodeDiv").style("display", "none");
   d3.select("#spanNodeLinkDiv").style("display", "none");
 
-  //draw nodes
+  //draw nodes on the div list area
   var divs = d3.select("#divNodes").selectAll("a").data(dataset.nodes);
   divs.join(
     (enter) =>
@@ -397,17 +408,20 @@ function redraw() {
         .text((d) => d.symbol)
         .style("background-color", "purple")
         .on("click", nodeSelection),
-    (update) =>
+    (update) => {
       update.call((update) =>
         update
           .transition()
           .duration(500)
           .text((d) => d.symbol)
+          .attr("id", (d) => d.id)
           .style("background-color", function (d) {
             if (d.id == selectedNode) return "blue";
             else return null;
           })
-      ),
+      );
+      return update;
+    },
     (exit) => exit.remove()
   );
 
@@ -432,6 +446,7 @@ function redraw() {
           .transition()
           .duration(500)
           .text((d) => "⇅" + d.symbol)
+          .attr("id", (d) => d.id)
           .style("background-color", function (d) {
             if (d.id == selectedNode) return "black";
             //check filtredLinks for the d.id, if true d.id is linked to selectedNode
@@ -448,20 +463,59 @@ function redraw() {
   );
 
   //draw behaviors for selected node
+  //draw behavior on div list area
+  var divsBeh = d3
+    .select("#divNodeBehaviors")
+    .selectAll("a")
+    .data(dataset.behaviors);
+  var filtredAssumption = dataset.assumptions.filter(
+    (x) => x.agent.id == selectedNode
+  );
+  divsBeh.join(
+    (enter) =>
+      enter
+        .append("a")
+        .attr("xlink:href", "#")
+        .attr("id", (d) => d.id)
+        .text((d) => d.short)
+        .on("click", nodeBehaviorSelection),
+    (update) =>
+      update.call((update) =>
+        update
+          .transition()
+          .duration(500)
+          .text((d) => d.short)
+          .attr("id", (d) => d.id)
+          .style("background-color", function (d) {
+            if (filtredAssumption.find((x) => x.behavior.id == d.id))
+              return "green";
+            else return null;
+          })
+      ),
+    (exit) => exit.remove()
+  );
 }
 
-//function that paint the selected node li and remove color of the others
+//function that paint the selected node li and remove color of the others ***
+//kind useless for now
 function nodeSelection() {
+  //need to find real id
   selectedNode = Number(this.id);
+  console.log("new selectedNode" + this.id);
 
   updateCanva();
   redraw();
   showNode();
 }
 
-//in progress function
+//function when clicking link, need to finish********
 function nodeLinkClick() {
   var selectedNodeLink = this.id;
+
+  if (!selectedNode) {
+    alert("First you need to select a node.");
+    return;
+  }
 
   //if element clicked is the same as selected them show alert
   if (selectedNodeLink == selectedNode) {
@@ -478,7 +532,8 @@ function nodeLinkClick() {
 
 /* #endregion */
 
-/* #region ---------- ????? Region ---------- */
+/* #region ---------- Behavior Region ---------- */
+var selectedBeh;
 
 //button onclick additions
 const btnAddBehavior = document.getElementById("btnAddBehavior");
@@ -495,18 +550,142 @@ btnDeleteBehavior.addEventListener("click", function () {
 });
 
 function newBehavior() {
-  //console.log(dataset);
-  alert("Not Implemented!");
+  var newChossenBeh = chooseRandomBehavior(
+    dataset.behaviors.map((a) => a.short)
+  );
+  var newBehavior = new Behavior(newChossenBeh.short, newChossenBeh.desc);
+  selectedBeh = newBehavior.id;
+  dataset.behaviors.push(newBehavior);
+  //updateCanva();
+  redraw();
+  redrawBehaviors();
+  showBehavior();
 }
 
 function updateBehavior() {
-  //console.log(dataset);
-  alert("Not Implemented!");
+  //verify if the selected behavior exists
+  if (selectedBeh !== undefined) {
+    var id = d3.select("#tbxBehaviorId").node().value;
+    var short = d3.select("#tbxBehaviorShort").node().value;
+    var desc = d3.select("#tbxBehaviorDesc").node().value;
+    if (short == "" || desc == "") {
+      alert("Short description or description field empty warning.");
+    }
+
+    //find index of specific object using findIndex method.
+    var objIndex = dataset.behaviors.findIndex((obj) => obj.id == id);
+
+    //update object properties
+    dataset.behaviors[objIndex].short = short;
+    dataset.behaviors[objIndex].description = desc;
+
+    //update both input type text
+    d3.select("#tbxBehaviorShort").property("value", short);
+    d3.select("#tbxBehaviorDesc").property("value", desc);
+    redraw();
+    redrawBehaviors();
+    alert("Updated behavior with sucess!");
+  } else alert("No behavior selected for update.");
 }
 
 function deleteBehavior() {
-  //console.log(dataset);
-  alert("Not Implemented!");
+  //verify if selected node exists
+  if (selectedBeh !== undefined) {
+    //delete assumptions containing behavior
+    dataset.assumptions = dataset.assumptions.filter(
+      (x) => x.behavior.id != selectedBeh
+    );
+
+    //delete method sometimes return [empty] instead of [] and bugs the system
+    //that's why filtered it, improvements probably can be made.
+    dataset.behaviors = dataset.behaviors.filter((x) => x.id != selectedBeh);
+    selectedBeh = undefined;
+
+    redraw();
+    redrawBehaviors();
+    cleanBehavior();
+  } else alert("No behavior selected for deletion.");
+
+  //hide modalDeleteNode
+  d3.select("#modalDeleteBehavior").style("display", "none");
+}
+
+function behaviorSelection() {
+  //need to find real id
+  selectedBeh = Number(this.id);
+
+  redrawBehaviors();
+  showBehavior();
+}
+
+//function when click at behavior inside behaviors tab, for later update
+function showBehavior() {
+  if (selectedBeh !== undefined) {
+    var realBeh = dataset.behaviors.find((x) => x.id === selectedBeh);
+    d3.select("#tbxBehaviorId").property("value", realBeh.id);
+    d3.select("#tbxBehaviorShort").property("value", realBeh.short);
+    d3.select("#tbxBehaviorDesc").property("value", realBeh.description);
+  } else alert("No behavior selected to show data.");
+}
+function cleanBehavior() {
+  d3.select("#tbxBehaviorId").property("value", "");
+  d3.select("#tbxBehaviorShort").property("value", "");
+  d3.select("#tbxBehaviorDesc").property("value", "");
+}
+
+function nodeBehaviorSelection() {
+  var selectedNodeBehavior = Number(this.id);
+
+  if (!selectedNode) {
+    alert("First you need to select a node.");
+    return;
+  }
+
+  //create behavior assumption or remove if already exists
+  newAssumption(dataset, selectedNode, selectedNodeBehavior);
+
+  updateCanva();
+  redraw();
+}
+
+/* #endregion */
+
+/* #region ---------- Data Treatment Region for First Tab ---------- */
+
+//redraw behaviors board
+function redrawBehaviors() {
+  //hide span message
+  d3.select("#spanDivBehaviors").style("display", "none");
+  d3.select("#spanNodeBehaviorDiv").style("display", "none");
+
+  //draw behavior on div list area
+  var divsBeh = d3
+    .select("#divBehaviors")
+    .selectAll("a")
+    .data(dataset.behaviors);
+  divsBeh.join(
+    (enter) =>
+      enter
+        .append("a")
+        .attr("xlink:href", "#")
+        .attr("id", (d) => d.id)
+        .text((d) => d.short)
+        .style("background-color", "purple")
+        .on("click", behaviorSelection),
+    (update) =>
+      update.call((update) =>
+        update
+          .transition()
+          .duration(500)
+          .text((d) => d.short)
+          .attr("id", (d) => d.id)
+          .style("background-color", function (d) {
+            if (d.id == selectedBeh) return "blue";
+            else return null;
+          })
+      ),
+    (exit) => exit.remove()
+  );
 }
 
 /* #endregion */
@@ -598,14 +777,14 @@ function refreshDatabase(myTxt) {
       short: dataset.behaviors[i].short,
       description: dataset.behaviors[i].description,
     };
-    reducedDatabase.nodes.push(simplifiedBehavior);
+    reducedDatabase.behaviors.push(simplifiedBehavior);
   }
   for (var i = 0; i < dataset.assumptions.length; i++) {
     let simplifiedAssumption = {
       agent: dataset.assumptions[i].agent.id,
       behavior: dataset.assumptions[i].behavior.id,
     };
-    reducedDatabase.nodes.push(simplifiedAssumption);
+    reducedDatabase.assumptions.push(simplifiedAssumption);
   }
   myTxt.property("value", JSON.stringify(reducedDatabase, null, 2));
 }

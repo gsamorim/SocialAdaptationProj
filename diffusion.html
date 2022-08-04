@@ -83,7 +83,7 @@
                   <h6>Behaviors of the Selected Node:</h6>
                </div>
                <div class="row flex-box" id="divNodeBehaviors">
-                  <span class="note">Behaviors are created in the adjacent tab</span>
+                  <span id="spanNodeBehaviorDiv" class="note">Behaviors are created in the adjacent tab</span>
                </div>
                <div class="row">
                   <hr>
@@ -106,7 +106,6 @@
                   <button id="btnAddNode" class="btn-style-small wauto">Add Random Node</button>
                   <button id="btnDeleteNode" class="btn-style-small wauto">Delete Selected Node</button>
                   <div id="modalDeleteNode" class="modal">
-
                      <!-- Modal content -->
                      <div class="modal-content">
                         <span class="close">&times;</span>
@@ -121,19 +120,43 @@
             <div id="Behaviors" class="tabcontent">
                <div class="row">
                   <h6>Behaviors:</h6>
+                  <span class="note">(Selected Behavior in <span class="blue-span">&#9632;blue</span>)</span>
+                  <span class="note">(Auto-select last added with <span class="purple-span">&#9632;purple</span>
+                     color)</span>
                </div>
                <div class="row flex-box" id="divBehaviors">
-
+                  <span id="spanDivBehaviors" class="note">click below at "Add Random Behavior" to start</span>
+               </div>
+               <div class="row">
+                  <hr>
+               </div>
+               <div class="row">
+                  <h6>ID:</h6><input type="text" class="input-text-style" id="tbxBehaviorId" disabled />
+                  <h6>short-description:</h6>
+                  <input type="text" class="input-text-style" id="tbxBehaviorShort" />
+                  <h6>description:</h6><input type="text" class="input-text-style" id="tbxBehaviorDesc" />
+                  <button id="btnUpdateBehavior" class="btn-style-small wauto">Update
+                     Behavior</button>
+               </div>
+               <div class="row">
+                  <hr>
                </div>
                <div class="row">
                   <h6>Selected Behavior Commands:</h6>
                </div>
                <div class="row">
-                  <button id="btnAddBehavior" class="btn-style-small wauto">Add Behavior</button>
-                  <button id="btnUpdateBehavior" class="btn-style-small wauto">Update
-                     Behavior</button>
+                  <button id="btnAddBehavior" class="btn-style-small wauto">Add Random Behavior</button>
                   <button id="btnDeleteBehavior" class="btn-style-small wauto">Delete
                      Behavior</button>
+                  <div id="modalDeleteBehavior" class="modal">
+                     <!-- Modal content -->
+                     <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <p>Confirm Behavior Deletion?</p>
+                        <button id="btnConfirmBehaviorDeletion" class="btn-style-small wauto">Yes</button>
+                        <button id="btnCancelBehaviorDeletion" class="btn-style-small wauto">No</button>
+                     </div>
+                  </div>
                </div>
             </div>
 

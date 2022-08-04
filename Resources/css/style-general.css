@@ -337,12 +337,18 @@ input[type="text"]:disabled {
   color: #9dbcc3;
 }
 
-#tbxNodeId {
+#tbxNodeId,
+#tbxBehaviorId {
   width: 40px;
 }
 
-#tbxNodeName {
+#tbxNodeName,
+#tbxBehaviorShort {
   width: 180px;
+}
+
+#tbxBehaviorDesc {
+  width: 260px;
 }
 
 .input-text-style {

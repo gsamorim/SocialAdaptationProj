@@ -71,6 +71,7 @@ export function chooseRandom(choosenNames) {
 
 //function to select a random name inside the array of unicodeSymbols
 export function chooseRandomUnicode(choosenNames) {
+  let tryCounter = 0;
   do {
     var unicodeElement =
       unicodeSymbols[Math.floor(Math.random() * unicodeSymbols.length)];
@@ -78,6 +79,9 @@ export function chooseRandomUnicode(choosenNames) {
     // console.log(
     //   unicodeElement + "-" + symbol + "-" + choosenNames.includes(symbol)
     // );
+    if (tryCounter > 5) {
+      return symbol;
+    } else tryCounter++;
   } while (choosenNames.includes(symbol));
 
   let name = unicodeElement.name;

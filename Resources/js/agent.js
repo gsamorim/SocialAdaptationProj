@@ -1,12 +1,13 @@
-var counter = 0;
+var counterAgents = 0;
+var counterBehaviors = 0;
 
 export class Agent {
   id;
   name;
   symbol;
   constructor(name, symbol) {
-    this.id = counter;
-    counter++;
+    this.id = counterAgents;
+    counterAgents++;
     this.name = name;
     this.symbol = symbol;
   }
@@ -53,8 +54,9 @@ export class Behavior {
   id;
   short;
   description;
-  constructor(id, short, description) {
-    this.id = id;
+  constructor(short, description) {
+    this.id = counterBehaviors;
+    counterBehaviors++;
     this.short = short;
     this.description = description;
   }
@@ -98,7 +100,8 @@ export function newAssumption(
     var behaviorID = dataset.behaviors.find(
       (x) => x.id == selectedNodeNewAssumption
     );
-    //add link
+    //add assumption
     dataset.assumptions.push(new Assumption(agentID, behaviorID));
+    console.log(dataset.assumptions);
   }
 }
