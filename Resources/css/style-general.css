@@ -393,11 +393,6 @@ input[type="text"]:disabled {
 
 /* ----- test purpose Area ----- */
 
-.logic-content {
-  /* background-color: #5f909b; */
-  min-height: 100px;
-}
-
 #canva {
   min-height: 100px;
   background-color: #5f909b;
@@ -408,15 +403,12 @@ input[type="text"]:disabled {
   min-height: 100px;
 }
 
-#chart {
-  background-color: #eee;
-}
-#chart circle {
-  fill-opacity: 0.8;
-}
-
 #database {
   min-height: 30px;
+  background-color: #99f2d2;
+}
+
+#logic {
   background-color: #99f2d2;
 }
 
@@ -477,6 +469,62 @@ input[type="text"]:disabled {
   color: black;
   text-decoration: none;
   cursor: pointer;
+}
+
+/* ----- Btn Area ----- */
+.btn-style-small {
+  -moz-box-shadow: inset 0px 1px 0px 0px #00afea;
+  -webkit-box-shadow: inset 0px 1px 0px 0px #00afea;
+  box-shadow: inset 0px 1px 0px 0px #00afea;
+  background: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0.05, #0084bb),
+    color-stop(1, #006195)
+  );
+  background: -moz-linear-gradient(top, #0084bb 5%, #006195 100%);
+  background: -webkit-linear-gradient(top, #0084bb 5%, #006195 100%);
+  background: -o-linear-gradient(top, #0084bb 5%, #006195 100%);
+  background: -ms-linear-gradient(top, #0084bb 5%, #006195 100%);
+  background: linear-gradient(to bottom, #0084bb 5%, #006195 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0084BB', endColorstr='#006195',GradientType=0);
+  background-color: #00afea;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  border: 1px solid #34495e;
+  display: inline-block;
+  cursor: pointer;
+  color: #d1d5e7;
+  font-size: 75%;
+  font-weight: 300;
+  text-decoration: none;
+  text-rendering: optimizeLegibility;
+  padding: 5px 15px 1px 15px;
+  text-align: center;
+}
+
+.btn-style-small:hover {
+  background: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0.05, #006195),
+    color-stop(1, #0084bb)
+  );
+  background: -moz-linear-gradient(top, #006195 5%, #0084bb 100%);
+  background: -webkit-linear-gradient(top, #006195 5%, #0084bb 100%);
+  background: -o-linear-gradient(top, #006195 5%, #0084bb 100%);
+  background: -ms-linear-gradient(top, #006195 5%, #0084bb 100%);
+  background: linear-gradient(to bottom, #006195 5%, #0084bb 100%);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#006195', endColorstr='#0084BB',GradientType=0);
+  background-color: #006195;
+}
+
+.btn-style-small:active {
+  position: relative;
+  top: 1px;
 }
 
 /* ----- Responsive Area ----- */

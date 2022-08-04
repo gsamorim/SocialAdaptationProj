@@ -48,9 +48,9 @@
          </div>
          <div class="row">
             <div class="tab">
-               <button class="tablinks active" onclick="openCity(event, 'Nodes')">Nodes</button>
-               <button class="tablinks" onclick="openCity(event, 'Behaviors')">Behaviors</button>
-               <button class="tablinks" onclick="openCity(event, 'Settings')">Settings</button>
+               <button class="tablinks active" onclick="openTab(event, 'Nodes')">Nodes</button>
+               <button class="tablinks" onclick="openTab(event, 'Behaviors')">Behaviors</button>
+               <button class="tablinks" onclick="openTab(event, 'Settings')">Settings</button>
             </div>
 
             <div id="Nodes" class="tabcontent" style="display: block;">
@@ -196,30 +196,24 @@
          </div>
       </section>
       <section id="logic">
-
-         <div class="row top-row">
-            <h4>
-               <button class="btn-icon" onclick="showHideLogic()">
-                  <ion-icon id="iconLogic" name="remove-circle-outline"></ion-icon>
-               </button>
-               Logic area:
-            </h4>
+         <div class="row">
+            <h3>Logic area:</h3>
          </div>
-         <div id="logic" class="logic-content">
-            <p>This example use media queries to transform the sidebar to a top navigation bar when the screen size
-               is
-               700px or less.</p>
+         <div id="logicDiv" class="logic-content">
             <div class="row">
                <div class="command-bar-container">
                   <input type="text" class="input-text-underlined"
                      placeholder="Insert your desired Logical Commands here...">
-                  <button id="btnSubmitCommand" class="btn-style">Submit</button>
+                  <button id="btnSubmitCommand" class="btn-style-small">Submit</button>
                </div>
             </div>
          </div>
+         <div class="row" id="ast">
+            <textarea id="myTextAreaAST" class="textarea15" rows=15 readonly></textarea>
+         </div>
       </section>
       <script>
-         function openCity(evt, cityName) {
+         function openTab(evt, cityName) {
             var i, tabcontent, tablinks;
             tabcontent = document.getElementsByClassName("tabcontent");
             for (i = 0; i < tabcontent.length; i++) {
@@ -244,7 +238,6 @@
          var btnNo = document.getElementById("btnCancelDeletion");
          // When the user clicks on the button, open the modal
          btn.onclick = function () {
-
             modal.style.display = "block";
          }
          // When the user clicks on <span> (x) or "No" button, close the modal
