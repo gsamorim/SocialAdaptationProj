@@ -790,6 +790,25 @@ function refreshDatabase(myTxt) {
 }
 /* #endregion */
 
+/* #region ---------- Logical Region ---------- */
+
+const txtCommand = document.getElementById("txtCommand");
+txtCommand.addEventListener("keypress", function (event) {
+  if (event.key === "Enter") commandEvent();
+});
+
+const btnSubmitCommand = document.getElementById("btnSubmitCommand");
+btnSubmitCommand.addEventListener("click", function () {
+  commandEvent();
+});
+
+function commandEvent() {
+  let com = txtCommand.value;
+  alert("Command Event happened!\n" + com + " detected!");
+}
+
+/* #endregion */
+
 /* #region ---------- ????? Region ---------- */
 
 //randomDataFill();
