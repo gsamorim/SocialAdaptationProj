@@ -13,6 +13,7 @@
 
    </style>
    <script defer type="module" src="Resources/js/graphD3.js"></script>
+   <script defer type="module" src="Resources/js/treePloter.js"></script>
    <script defer type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
    <script defer nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 </head>
@@ -209,8 +210,11 @@
             </div>
          </div>
          <div class="row" id="ast">
-            <textarea id="myTextAreaAST" class="textarea15" rows=15 readonly></textarea>
+            <div class="canvaAST"></div>
+            <textarea id="myTextAreaAST" onfocus="this.select();" class="textarea15" rows=32 readonly></textarea>
          </div>
+
+
       </section>
       <script>
          function openTab(evt, cityName) {

@@ -9,7 +9,6 @@ import {
 } from "./agent.js";
 import { chooseRandom, chooseRandomUnicode, allSymbols } from "./names.js";
 import { chooseRandomBehavior } from "./behaviorsEx.js";
-import { TxtWorker } from "./txtWorker.js";
 
 var dataset = {
   nodes: [],
@@ -792,20 +791,36 @@ function refreshDatabase(myTxt) {
 
 /* #region ---------- Logical Region ---------- */
 
-const txtCommand = document.getElementById("txtCommand");
-txtCommand.addEventListener("keypress", function (event) {
-  if (event.key === "Enter") commandEvent();
-});
+// const txtCommand = document.getElementById("txtCommand");
+// txtCommand.addEventListener("keypress", function (event) {
+//   if (event.key === "Enter") commandEvent();
+// });
 
-const btnSubmitCommand = document.getElementById("btnSubmitCommand");
-btnSubmitCommand.addEventListener("click", function () {
-  commandEvent();
-});
+// const btnSubmitCommand = document.getElementById("btnSubmitCommand");
+// btnSubmitCommand.addEventListener("click", function () {
+//   commandEvent();
+// });
 
-function commandEvent() {
-  let com = txtCommand.value;
-  alert("Command Event happened!\n" + com + " detected!");
-}
+// function commandEvent() {
+//   let com = txtCommand.value;
+
+//   let tokenizer = new Tokenizer();
+//   let parser = new Parser();
+//   let txtWorker = new TxtWorker();
+
+//   let text = `[adopt][adopt](B(a,b1))`;
+//   let tokens = tokenizer.tokenize(text);
+//   let jsonTokens = JSON.stringify(tokens, null, 2);
+//   let parseTree = parser.parse(tokens);
+//   let jsonTree = JSON.stringify(parseTree, null, 2);
+
+//   var myTxt = d3.select("#myTextAreaAST");
+//   myTxt.property("value", jsonTree);
+
+//   myTxt.node().focus();
+
+//   alert("Command Event happened!\n" + com + " detected!");
+// }
 
 /* #endregion */
 
