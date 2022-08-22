@@ -1,0 +1,51 @@
+{
+  "nodes": [
+    {
+      "id": 0,
+      "name": "White King",
+      "symbol": "♔"
+    },
+    {
+      "id": 1,
+      "name": "Thunderstorm",
+      "symbol": "⛈"
+    },
+    {
+      "id": 2,
+      "name": "Comet",
+      "symbol": "☄"
+    }
+  ],
+  "links": [
+    {
+      "source": 2,
+      "target": 1
+    },
+    {
+      "source": 1,
+      "target": 0
+    }
+  ],
+  "behaviors": [
+    {
+      "id": 0,
+      "short": "Vota",
+      "description": "Vota"
+    },
+    {
+      "id": 1,
+      "short": "Sugar!",
+      "description": "Use Sugar"
+    }
+  ],
+  "assumptions": [
+    {
+      "agent": 2,
+      "behavior": 0
+    },
+    {
+      "agent": 1,
+      "behavior": 1
+    }
+  ]
+}

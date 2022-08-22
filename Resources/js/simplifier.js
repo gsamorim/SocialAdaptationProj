@@ -2,10 +2,14 @@
 
 //adds elements for treeview
 export class Simple {
+  //start removing Program, which aways sit on the top
+  //and any BlockStm sitting at the top after Program
+  //then start  the main reduction method
   startReduction(parsed) {
     //var parsed = JSON.parse(ast);
     //remove program
     if (parsed.type == "Program") parsed = parsed.child;
+
     //first can't be a BlockStm
     //clean blocks until the first isn't a block
     while (parsed.type == "BlockStm") parsed = parsed.child;
@@ -14,6 +18,7 @@ export class Simple {
     return parsed;
   }
 
+  //main method
   callNext(next) {
     //console.log("next type:" + next.type);
     //call next
@@ -29,6 +34,7 @@ export class Simple {
     }
   }
 
+  //check for BlockStm
   blockCheck(current, next, andID) {
     //console.log("id:" + andID + "_" + current.type + "_" + next.type);
     //console.log("block check type:" + next.type + "_____andID:" + andID);
@@ -43,6 +49,7 @@ export class Simple {
     this.callNext(next);
   }
 
+  //test method
   goTru(cur) {
     if (cur === undefined || cur === null) return;
     console.log(cur.type);
@@ -54,6 +61,7 @@ export class Simple {
     }
   }
 
+  //test method
   goTru2(cur) {
     if (cur === undefined || cur === null) return;
     console.log(cur.type);
@@ -65,6 +73,8 @@ export class Simple {
     }
   }
 
+  //childs belonging to some commands (NOT, ADOPT, etc) are added out of arrays
+  //to plot the graph we need to add them to arrays
   addChildsToArray(cur) {
     if (cur === undefined || cur === null) return;
     if (cur.type == "AndStm") {

@@ -1,0 +1,77 @@
+{
+  "nodes": [
+    {
+      "id": 0,
+      "name": "Black Queen",
+      "symbol": "♛"
+    },
+    {
+      "id": 1,
+      "name": "Flower",
+      "symbol": "⚘"
+    },
+    {
+      "id": 2,
+      "name": "Black Star",
+      "symbol": "★"
+    },
+    {
+      "id": 3,
+      "name": "Umbrela",
+      "symbol": "☂"
+    },
+    {
+      "id": 4,
+      "name": "High Voltage",
+      "symbol": "⚡"
+    },
+    {
+      "id": 5,
+      "name": "Clear Wheater",
+      "symbol": "☀"
+    }
+  ],
+  "links": [
+    {
+      "source": 5,
+      "target": 2
+    },
+    {
+      "source": 5,
+      "target": 0
+    },
+    {
+      "source": 2,
+      "target": 3
+    },
+    {
+      "source": 2,
+      "target": 4
+    },
+    {
+      "source": 1,
+      "target": 2
+    },
+    {
+      "source": 1,
+      "target": 3
+    }
+  ],
+  "behaviors": [
+    {
+      "id": 0,
+      "short": "♥ Driving",
+      "description": "Love Driving"
+    }
+  ],
+  "assumptions": [
+    {
+      "agent": 1,
+      "behavior": 0
+    },
+    {
+      "agent": 3,
+      "behavior": 0
+    }
+  ]
+}

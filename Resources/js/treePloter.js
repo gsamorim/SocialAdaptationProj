@@ -117,7 +117,7 @@ function update() {
 
   // maps the node data to the tree layout
   treeData = treemap(treeData);
-  console.log(treeData.descendants());
+  //console.log(treeData.descendants());
   //console.log(nodes.data(treeData.descendants()));
 
   var links = grou
@@ -220,6 +220,69 @@ btnSubmitCommand.addEventListener("click", function () {
   commandEvent();
 });
 
+/* #region ---------- Message Region ---------- */
+
+function showMessage(msg) {
+  /**
+   * color background type
+   * 00529b bde5f8 info       information
+   * 4f8a10 dff2bf sucess     checkmark
+   * 9f6000 feefb3 warning    alert
+   * d8000c ffbaba error      close
+   * d63301 ffccba validation close
+   */
+
+  //change message
+  let myMessage = d3.select("#message");
+
+  //show if hidden
+  let showing = myMessage.style("display") === "none";
+  if (!showing) myMessage.style("display", "flex");
+
+  //check type
+  if (msg.type === "SUCESS") {
+    myMessage.select("ion-icon").property("name", "checkmark-circle-outline");
+    myMessage.style("color", "#355c0b");
+    myMessage.style("background-color", "#ADEB66");
+    myMessage.select("span").text("SUCESS!");
+  } else if (msg.type === "ERROR") {
+    myMessage.select("ion-icon").property("name", "close-circle-outline");
+    myMessage.style("color", "#d8000c");
+    myMessage.style("background-color", "#ffbaba");
+    myMessage.select("span").text(msg.local + " Error:" + msg.description);
+  } else if (msg.type === "WARNING") {
+    myMessage.select("ion-icon").property("name", "close-circle-outline");
+    myMessage.style("color", "#9f6000");
+    myMessage.style("background-color", "#feefb3");
+    myMessage.select("span").text(msg.local + " Error:" + msg.description);
+  }
+}
+
+function checkTokenError(tokens) {
+  if (!tokens || tokens[tokens.length - 1] === undefined) {
+    showMessage({
+      type: "ERROR",
+      local: "Tokenizer",
+      description: "Empty Tokenizer",
+    });
+    return false;
+  }
+  if (tokens[tokens.length - 1].type === "ERROR") {
+    showMessage({
+      type: "ERROR",
+      local: "Tokenizer",
+      description:
+        tokens[tokens.length - 1].description +
+        ", value:" +
+        tokens[tokens.length - 1].value +
+        ", position:" +
+        tokens[tokens.length - 1].position,
+    });
+    return false;
+  }
+  return true;
+}
+
 function commandEvent() {
   let com = txtCommand.value;
 
@@ -227,30 +290,60 @@ function commandEvent() {
   let parser = new Parser();
   let simplifier = new Simple();
   let txtWorker = new TxtWorker();
+  let returnCheck = false;
 
   //let text = `[adopt][adopt](B(a,b1))`;
+  //let text = `B(a,b1) && B(a,b1)`;
   let text = com;
-  let tokens = tokenizer.tokenize(text);
-  //let jsonTokens = JSON.stringify(tokens, null, 2);
-  let parseTree = parser.parse(tokens);
-  //let jsonTree = JSON.stringify(parseTree, null, 2);
-  let simplifiedTree = simplifier.startReduction(parseTree);
-  simplifiedTree = simplifier.addChildsToArray(simplifiedTree);
-  //simplifier.goTru2(simplifiedTree);
-  let jsonSimplifiedTree = JSON.stringify(simplifiedTree, null, 2);
 
+  //tokenizer
+  let tokens = tokenizer.tokenize(text);
+  returnCheck = checkTokenError(tokens);
+  if (!returnCheck) return;
+  //let jsonTokens = JSON.stringify(tokens, null, 2);
+
+  //parser
+  try {
+    var parseTree = parser.parse(tokens);
+    //let jsonTree = JSON.stringify(parseTree, null, 2);
+  } catch (err) {
+    showMessage({
+      type: "ERROR",
+      local: "Parser",
+      description: err,
+    });
+    return;
+  }
+
+  //simplifier
+  try {
+    var simplifiedTree = simplifier.startReduction(parseTree);
+    simplifiedTree = simplifier.addChildsToArray(simplifiedTree);
+    //simplifier.goTru2(simplifiedTree);
+    var jsonSimplifiedTree = JSON.stringify(simplifiedTree, null, 2);
+  } catch (err) {
+    showMessage({
+      type: "ERROR",
+      local: "Simplifier",
+      description: err.message,
+    });
+    return;
+  }
+
+  //text area
   var myTxt = d3.select("#myTextAreaAST");
   myTxt.property("value", jsonSimplifiedTree);
-
   myTxt.node().focus();
 
-  //alert("Command Event happened!\n" + com + " detected!");
-  //alert(jsonTree);
-
+  //canva method to show tree
+  //define the new as treeData
   treeData = d3.hierarchy(simplifiedTree, function (d) {
     return d.child;
   });
   update();
+  showMessage({
+    type: "SUCESS",
+  });
 }
 
 /* #endregion */

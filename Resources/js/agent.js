@@ -74,7 +74,7 @@ export class Assumption {
 //method to create/remove assumption
 //a different method is needed for logical assumptions
 //since there they do not lose assumptions at any time
-export function newAssumption(
+export function newOrRemoveAssumption(
   dataset,
   selectedNode,
   selectedNodeNewAssumption
@@ -102,6 +102,6 @@ export function newAssumption(
     );
     //add assumption
     dataset.assumptions.push(new Assumption(agentID, behaviorID));
-    console.log(dataset.assumptions);
+    //console.log(dataset.assumptions);
   }
 }

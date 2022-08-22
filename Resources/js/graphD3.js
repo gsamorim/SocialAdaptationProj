@@ -5,7 +5,7 @@ import {
   Behavior,
   createLink,
   Assumption,
-  newAssumption,
+  newOrRemoveAssumption,
 } from "./agent.js";
 import { chooseRandom, chooseRandomUnicode, allSymbols } from "./names.js";
 import { chooseRandomBehavior } from "./behaviorsEx.js";
@@ -641,7 +641,7 @@ function nodeBehaviorSelection() {
   }
 
   //create behavior assumption or remove if already exists
-  newAssumption(dataset, selectedNode, selectedNodeBehavior);
+  newOrRemoveAssumption(dataset, selectedNode, selectedNodeBehavior);
 
   updateCanva();
   redraw();

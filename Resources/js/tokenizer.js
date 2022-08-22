@@ -130,12 +130,16 @@ export class Tokenizer {
     }
 
     //check for Word
+    //aways start with lower case
+    //maximum word size is 6 for now
+    //accept empty spaces
     if (this.checkIfLowerCase(str.charCodeAt(cursor))) {
       let word = str[cursor++];
       while (
         (this.checkIfLowerCase(str.charCodeAt(cursor)) ||
           this.checkIfUpperCase(str.charCodeAt(cursor)) ||
-          this.checkIfNumber(str.charCodeAt(cursor))) &&
+          this.checkIfNumber(str.charCodeAt(cursor)) ||
+          this.checkIfEmpty(str[cursor])) &&
         cursor <= 6
       )
         word += str[cursor++];
@@ -237,7 +241,7 @@ export class Tokenizer {
     this._tokenLenght = 1;
     return {
       type: "ERROR",
-      description: "Error: General Error.",
+      description: "General Error",
       value: str[cursor],
       position: cursor,
     };

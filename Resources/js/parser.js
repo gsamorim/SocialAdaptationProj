@@ -27,10 +27,10 @@ export class Parser {
       child: this.andCheck(),
     };
     // while (this._tokenIterator < this._tokens.length) {
-    //   let subTree = this.newStm(this.getStarter());
+    //   let subTree = this.newStm(this.getTypeStarter());
     //   program.body.push(subTree);
     // }
-    // let formula = this.newStm(this.getStarter());
+    // let formula = this.newStm(this.getTypeStarter());
     // if (this._tokenIterator < this._tokens.length) {
     //   let last = this._tokens[this._tokenIterator - 1];
     //   throw new SyntaxError(
@@ -42,10 +42,13 @@ export class Parser {
   }
 
   andCheck() {
-    let subTree = this.newStm(this.getStarter());
+    //calculate the first element of the tree
+    let subTree = this.newStm(this.getTypeStarter());
+
     // console.log(
     //   subTree + "+" + this._tokenIterator + "+" + this._tokens.length
     // );
+
     //return here if no And found
     if (this._tokenIterator === this._tokens.length) return subTree;
 
@@ -55,11 +58,11 @@ export class Parser {
 
     //token pode ser AND ou CPAREN
     while (this._tokenIterator < this._tokens.length) {
-      const nextToken = this.getStarter();
+      const nextToken = this.getTypeStarter();
       if (nextToken == "CPAREN") break;
       const token = this._eat("AND");
       if (token.type === "AND") {
-        let newSubTree = this.newStm(this.getStarter());
+        let newSubTree = this.newStm(this.getTypeStarter());
         childs.push(newSubTree);
       }
     }
@@ -88,12 +91,12 @@ export class Parser {
       case "NOT":
         return {
           type: "NotStm",
-          child: this.newStm(this.getStarter()),
+          child: this.newStm(this.getTypeStarter()),
         };
       case "OPAREN":
         let block = {
           type: "BlockStm",
-          //child: this.newStm(this.getStarter()),
+          //child: this.newStm(this.getTypeStarter()),
           child: this.andCheck(),
         };
         this._eat("CPAREN", "BlockStm");
@@ -101,18 +104,36 @@ export class Parser {
       case "OBRACKET":
         var sequenceSqr = "AdoptStm";
         this._eat("WORD", sequenceSqr);
+        //can be:
+        //  [adopt] Phi || [adopt, identifier] Phi
+        let behaviorOfAdopt = null;
+        let nextTokenType = this.getNextTokenType();
+        if (nextTokenType === "COMMA") {
+          this._eat("COMMA", sequenceSqr);
+          behaviorOfAdopt = this._eatIdentifier(sequenceSqr);
+        }
         this._eat("CBRACKET", sequenceSqr);
         return {
           type: sequenceSqr,
-          child: this.newStm(this.getStarter()),
+          behavior: behaviorOfAdopt,
+          child: this.newStm(this.getTypeStarter()),
         };
       case "OANGB":
-        var sequenceSqr = "AdoptAngStm";
-        this._eat("WORD", sequenceSqr);
-        this._eat("CANGB", sequenceSqr);
+        var sequenceAng = "AdoptAngStm";
+        this._eat("WORD", sequenceAng);
+        //can be:
+        //  <adopt> Phi || <adopt, identifier> Phi
+        let behaviorOfAdoptAng = null;
+        let nextTokenTypeAng = this.getNextTokenType();
+        if (nextTokenTypeAng === "COMMA") {
+          this._eat("COMMA", sequenceSqr);
+          behaviorOfAdoptAng = this._eatIdentifier(sequenceAng);
+        }
+        this._eat("CANGB", sequenceAng);
         return {
-          type: sequenceSqr,
-          child: this.newStm(this.getStarter()),
+          type: sequenceAng,
+          behavior: behaviorOfAdoptAng,
+          child: this.newStm(this.getTypeStarter()),
         };
     }
     throw new SyntaxError(
@@ -129,9 +150,9 @@ export class Parser {
       case "N":
         sequenceType = "NeighborStm";
         this._eat("OPAREN", sequenceType);
-        let agent1 = this._eat("WORD", sequenceType);
+        let agent1 = this._eatIdentifier(sequenceType);
         this._eat("COMMA", sequenceType);
-        let agent2 = this._eat("WORD", sequenceType);
+        let agent2 = this._eatIdentifier(sequenceType);
         this._eat("CPAREN", sequenceType);
         return {
           type: sequenceType,
@@ -141,9 +162,9 @@ export class Parser {
       case "B":
         sequenceType = "BehaviorStm";
         this._eat("OPAREN", sequenceType);
-        let agentOfB = this._eat("WORD", sequenceType);
+        let agentOfB = this._eatIdentifier(sequenceType);
         this._eat("COMMA", sequenceType);
-        let behavior = this._eat("WORD", sequenceType);
+        let behavior = this._eatIdentifier(sequenceType);
         this._eat("CPAREN", sequenceType);
         return {
           type: sequenceType,
@@ -174,9 +195,21 @@ export class Parser {
    */
 
   /**
-   * Get a token to start a new tree
+   * Get next token type
    */
-  getStarter() {
+  getNextTokenType() {
+    return this._tokens[this._tokenIterator].type;
+  }
+
+  /**
+   * Get a token type to start a new tree
+   * Do not change anything,
+   * Just return the type of the next token
+   * For now it does the same as getNextTokenType
+   * checks about what is a starter token
+   * can be added in the future
+   */
+  getTypeStarter() {
     return this._tokens[this._tokenIterator].type;
   }
 
@@ -216,6 +249,54 @@ export class Parser {
       }
       throw new SyntaxError(
         `Unexpected token: "${token.type}", expected: "${tokenType}", after "${
+          last.value
+        }", at position ${last.start + last.length}`
+      );
+    }
+
+    //Move iterator
+    this._tokenIterator++;
+
+    return token;
+  }
+
+  /**
+   * Expects a token of type WORD or Number
+   * both can be used to identify agents or behaviors
+   */
+  _eatIdentifier(operatorSeq) {
+    //get next token
+    let last = this._tokens[this._tokenIterator - 1];
+    let token = this._tokens[this._tokenIterator];
+
+    if (token == null) {
+      if (operatorSeq) {
+        throw new SyntaxError(
+          `Unexpected end of input, expected: WORD or NUMBER, after "${
+            last.value
+          }", at position ${
+            last.start + last.length
+          }, operator of type ${operatorSeq} didn't found proper sequence.`
+        );
+      }
+      throw new SyntaxError(
+        `Unexpected end of input, expected: WORD or NUMBER, after "${
+          last.value
+        }", at position ${last.start + last.length}`
+      );
+    }
+    if (token.type !== "WORD" && token.type !== "NUMBER") {
+      if (operatorSeq) {
+        throw new SyntaxError(
+          `Unexpected token: "${
+            token.type
+          }", expected: WORD or NUMBER, after "${last.value}", at position ${
+            last.start + last.length
+          }, operator of type ${operatorSeq} didn't found proper sequence.`
+        );
+      }
+      throw new SyntaxError(
+        `Unexpected token: "${token.type}", expected: WORD or NUMBER, after "${
           last.value
         }", at position ${last.start + last.length}`
       );
